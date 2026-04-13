@@ -340,14 +340,20 @@ export class SearchComponent implements OnInit {
   exportResults(format: 'csv' | 'xlsx'): void {
     if (!this.result || this.result.data.length === 0) return;
 
-    const q = this.globalQuery;
-    this.searchService.exportResults(q, format).subscribe({
+    const safeName = (this.globalQuery || 'results').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
+    const filename = `ionora_${safeName}_${new Date().toISOString().split('T')[0]}.${format}`;
+
+    // Pass advanced filters if in advanced mode, otherwise pass global query
+    const obs = this.isAdvanced
+      ? this.searchService.exportResults('', format, { ...this.filters as Record<string, string> })
+      : this.searchService.exportResults(this.globalQuery, format);
+
+    obs.subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const safeName = this.globalQuery.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
-        a.download = `ionora_${safeName}_${new Date().toISOString().split('T')[0]}.${format}`;
+        a.download = filename;
         a.click();
         window.URL.revokeObjectURL(url);
       },

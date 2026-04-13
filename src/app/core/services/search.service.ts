@@ -57,7 +57,12 @@ export class SearchService {
     return this.http.get<CdrRecord>(`${API}/api/records/${id}`);
   }
 
-  exportResults(q: string, format: 'csv' | 'xlsx'): Observable<Blob> {
+  exportResults(q: string, format: 'csv' | 'xlsx', advancedParams?: Record<string, string>): Observable<Blob> {
+    if (advancedParams && Object.keys(advancedParams).length > 0) {
+      // Advanced search export — POST with full params
+      return this.http.post(`${API}/api/search/export`, { ...advancedParams, format }, { responseType: 'blob' });
+    }
+    // Global search export
     const params = new HttpParams().set('q', q).set('format', format);
     return this.http.get(`${API}/api/search/export`, { params, responseType: 'blob' });
   }
