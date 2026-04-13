@@ -57,52 +57,39 @@ import { RecordDetailComponent } from './record-detail.component';
                     [(ngModel)]="filters.cdr_number">
                 </div>
                 <div class="form-group">
-                  <label class="form-label">B-Party Number</label>
-                  <input type="text" class="form-control" placeholder="Called number"
+                  <label class="form-label">B Party</label>
+                  <input type="text" class="form-control" placeholder="B Party number"
                     [(ngModel)]="filters.b_party">
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Subscriber Name</label>
-                  <input type="text" class="form-control" placeholder="Name"
+                  <label class="form-label">B Party Internal</label>
+                  <input type="text" class="form-control" placeholder="B Party Internal"
+                    [(ngModel)]="filters.b_party_internal">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Name B Party</label>
+                  <input type="text" class="form-control" placeholder="Subscriber name"
                     [(ngModel)]="filters.name">
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Father's Name</label>
+                  <label class="form-label">Father B Party</label>
                   <input type="text" class="form-control" placeholder="Father name"
                     [(ngModel)]="filters.father_name">
                 </div>
                 <div class="form-group">
-                  <label class="form-label">City</label>
-                  <input type="text" class="form-control" placeholder="City"
+                  <label class="form-label">Permanent Address</label>
+                  <input type="text" class="form-control" placeholder="Address"
+                    [(ngModel)]="filters.permanent_address">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Main City</label>
+                  <input type="text" class="form-control" placeholder="Main city"
                     [(ngModel)]="filters.city">
                 </div>
                 <div class="form-group">
-                  <label class="form-label">IMEI</label>
-                  <input type="text" class="form-control" placeholder="Device IMEI"
-                    [(ngModel)]="filters.imei">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">IMSI</label>
-                  <input type="text" class="form-control" placeholder="SIM IMSI"
-                    [(ngModel)]="filters.imsi">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Operator</label>
-                  <input type="text" class="form-control" placeholder="Telecom operator"
-                    [(ngModel)]="filters.operator">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Circle / State</label>
-                  <input type="text" class="form-control" placeholder="Circle"
-                    [(ngModel)]="filters.circle">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Call Type</label>
-                  <select class="form-control" [(ngModel)]="filters.call_type">
-                    <option value="">All Types</option>
-                    <option>MOC</option><option>MTC</option>
-                    <option>SMS</option><option>DATA</option>
-                  </select>
+                  <label class="form-label">Sub City</label>
+                  <input type="text" class="form-control" placeholder="Sub city"
+                    [(ngModel)]="filters.sub_city">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Date From</label>
@@ -166,16 +153,15 @@ import { RecordDetailComponent } from './record-detail.component';
               <table>
                 <thead>
                   <tr>
-                    <th>CDR Number</th>
+                    <th>CdrNo</th>
                     <th>B Party</th>
-                    <th>Name</th>
-                    <th>Call Date</th>
-                    <th>Time</th>
-                    <th>Duration</th>
-                    <th>Type</th>
-                    <th>IMEI</th>
-                    <th>City</th>
-                    <th>Operator</th>
+                    <th>B Party Internal</th>
+                    <th>Name B Party</th>
+                    <th>Father B Party</th>
+                    <th>Permanent Address</th>
+                    <th>Date</th>
+                    <th>Main City</th>
+                    <th>Sub City</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -183,18 +169,13 @@ import { RecordDetailComponent } from './record-detail.component';
                     <tr (click)="openDetail(row)">
                       <td>{{ row.cdr_number || '—' }}</td>
                       <td>{{ row.b_party || '—' }}</td>
+                      <td>{{ row.b_party_internal || '—' }}</td>
                       <td>{{ row.name_b_party || '—' }}</td>
+                      <td>{{ row.father_name || '—' }}</td>
+                      <td>{{ row.permanent_address || '—' }}</td>
                       <td>{{ formatDate(row.call_date) }}</td>
-                      <td>{{ row.call_time || '—' }}</td>
-                      <td>{{ formatDuration(row.duration_seconds) }}</td>
-                      <td>
-                        @if (row.call_type) {
-                          <span class="badge" [ngClass]="callTypeBadge(row.call_type)">{{ row.call_type }}</span>
-                        } @else { — }
-                      </td>
-                      <td>{{ row.imei || '—' }}</td>
                       <td>{{ row.main_city || '—' }}</td>
-                      <td>{{ row.operator || '—' }}</td>
+                      <td>{{ row.sub_city || '—' }}</td>
                     </tr>
                   }
                 </tbody>
@@ -386,20 +367,5 @@ export class SearchComponent implements OnInit {
     if (!val) return '—';
     // Handle ISO string or plain date
     return val.split('T')[0];
-  }
-
-  formatDuration(secs: number | null): string {
-    if (!secs) return '—';
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return m > 0 ? `${m}m ${s}s` : `${s}s`;
-  }
-
-  callTypeBadge(type: string): string {
-    const map: Record<string, string> = {
-      MOC: 'badge-info', MTC: 'badge-success',
-      SMS: 'badge-warning', DATA: 'badge-gray',
-    };
-    return map[type.toUpperCase()] || 'badge-gray';
   }
 }
