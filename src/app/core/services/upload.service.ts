@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+const API = environment.apiUrl;
 
 export interface UploadBatch {
   id: string;
@@ -28,7 +31,7 @@ export class UploadService {
   constructor(private http: HttpClient) {}
 
   createBatch(notes?: string): Observable<{ upload_id: string }> {
-    return this.http.post<{ upload_id: string }>('/api/uploads', { notes });
+    return this.http.post<{ upload_id: string }>(`${API}/api/uploads`, { notes });
   }
 
   uploadFiles(uploadId: string, files: File[]): Observable<{ progress: number; done: boolean; result?: unknown }> {
@@ -36,7 +39,7 @@ export class UploadService {
     const formData = new FormData();
     files.forEach(f => formData.append('files', f, f.name));
 
-    this.http.post(`/api/uploads/${uploadId}/files`, formData, {
+    this.http.post(`${API}/api/uploads/${uploadId}/files`, formData, {
       reportProgress: true,
       observe: 'events',
     }).subscribe({
@@ -57,19 +60,19 @@ export class UploadService {
 
   getUploads(page = 1, limit = 20): Observable<{ data: UploadBatch[]; pagination: { total: number; page: number; limit: number } }> {
     return this.http.get<{ data: UploadBatch[]; pagination: { total: number; page: number; limit: number } }>(
-      `/api/uploads?page=${page}&limit=${limit}`
+      `${API}/api/uploads?page=${page}&limit=${limit}`
     );
   }
 
   getUpload(id: string): Observable<UploadBatch> {
-    return this.http.get<UploadBatch>(`/api/uploads/${id}`);
+    return this.http.get<UploadBatch>(`${API}/api/uploads/${id}`);
   }
 
   getPreview(id: string): Observable<{ data: unknown[]; count: number }> {
-    return this.http.get<{ data: unknown[]; count: number }>(`/api/uploads/${id}/preview`);
+    return this.http.get<{ data: unknown[]; count: number }>(`${API}/api/uploads/${id}/preview`);
   }
 
   deleteUpload(id: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`/api/uploads/${id}`);
+    return this.http.delete<{ message: string }>(`${API}/api/uploads/${id}`);
   }
 }

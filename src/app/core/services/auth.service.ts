@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { ActivityService } from './activity.service';
+import { environment } from '../../../environments/environment';
+
+const API = environment.apiUrl;
 
 export interface User {
   id: string;
@@ -23,7 +26,7 @@ export class AuthService {
   private activity = inject(ActivityService);
 
   login(username: string, password: string) {
-    return this.http.post<{ token: string; user: User }>('/api/auth/login', { username, password }).pipe(
+    return this.http.post<{ token: string; user: User }>(`${API}/api/auth/login`, { username, password }).pipe(
       tap(({ token, user }) => {
         localStorage.setItem(this.TOKEN_KEY, token);
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));

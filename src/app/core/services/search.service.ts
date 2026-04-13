@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+const API = environment.apiUrl;
 
 export interface CdrRecord {
   id: number;
@@ -64,23 +67,20 @@ export class SearchService {
 
   globalSearch(q: string, page = 1, limit = 50): Observable<SearchResult> {
     const params = new HttpParams().set('q', q).set('page', page).set('limit', limit);
-    return this.http.get<SearchResult>('/api/search', { params });
+    return this.http.get<SearchResult>(`${API}/api/search`, { params });
   }
 
   advancedSearch(params: AdvancedSearchParams): Observable<SearchResult> {
-    return this.http.post<SearchResult>('/api/search/advanced', params);
+    return this.http.post<SearchResult>(`${API}/api/search/advanced`, params);
   }
 
   getRecord(id: number): Observable<CdrRecord> {
-    return this.http.get<CdrRecord>(`/api/records/${id}`);
+    return this.http.get<CdrRecord>(`${API}/api/records/${id}`);
   }
 
   exportResults(q: string, format: 'csv' | 'xlsx'): Observable<Blob> {
     const params = new HttpParams().set('q', q).set('format', format);
-    return this.http.get('/api/search/export', {
-      params,
-      responseType: 'blob',
-    });
+    return this.http.get(`${API}/api/search/export`, { params, responseType: 'blob' });
   }
 
   exportUrl(q: string, format: 'csv' | 'xlsx'): string {
